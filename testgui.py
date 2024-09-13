@@ -129,7 +129,7 @@ search_button.grid(row=1, columnspan=2, pady=10)
 
 # Vehicle List
 list_frame = ttk.Frame(controls_frame)
-list_frame.pack(fill="both", expand=True, pady=10)
+list_frame.pack(fill="both", expagnd=True, pady=10)
 
 vehicle_list = tk.Listbox(list_frame)
 vehicle_list.pack(fill="both", expand=True, padx=5, pady=5)

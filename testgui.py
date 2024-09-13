@@ -1,6 +1,9 @@
 import ttkbootstrap as ttk
 from ttkbootstrap.constants import *
 import tkinter as tk
+import json
+
+
 
 # Function placeholders
 def capture_and_process():
@@ -9,8 +12,30 @@ def capture_and_process():
 def add_vehicle():
     pass
 
+def load_json(file_path):
+    with open(file_path, 'r') as f:
+        data = json.load(f)
+    return data
+
 def search_vehicle():
-    pass
+    plate_to_search = search_entry.get().strip().upper()
+    vehicle_found = False
+    
+    # Load the vehicle data
+    vehicles = load_json("vehicle.json")
+    
+    # Search for the plate
+    for vehicle in vehicles:
+        if vehicle["license_plate"] == plate_to_search:
+            search_results_label.config(text=f"License Plate: {vehicle['license_plate']}\nExpiry Date: {vehicle['expiry_date']}")
+            vehicle_found = True
+            break
+
+    if not vehicle_found:
+        search_results_label.config(text=f"Vehicle plate not found")
+
+
+
 
 def generate_vehicle_cards(parent, vehicles):
     for widget in parent.winfo_children():
@@ -127,9 +152,12 @@ search_entry.grid(row=0, column=1, padx=5, pady=5)
 search_button = ttk.Button(search_frame, text="Qidirish", command=search_vehicle, **button_style)
 search_button.grid(row=1, columnspan=2, pady=10)
 
+search_results_label = ttk.Label(search_frame, text="", bootstyle="inverse", anchor="center")
+search_results_label.grid(row=2, columnspan=2, pady=10)
+
 # Vehicle List
 list_frame = ttk.Frame(controls_frame)
-list_frame.pack(fill="both", expagnd=True, pady=10)
+list_frame.pack(fill="both", expand=True, pady=10)
 
 vehicle_list = tk.Listbox(list_frame)
 vehicle_list.pack(fill="both", expand=True, padx=5, pady=5)

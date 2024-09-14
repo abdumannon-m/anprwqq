@@ -9,13 +9,58 @@ import json
 def capture_and_process():
     pass
 
-def add_vehicle():
-    pass
-
 def load_json(file_path):
     with open(file_path, 'r') as f:
         data = json.load(f)
     return data
+
+def save_vehicle_data(new_data):
+    with open('vehicle.json', 'w') as f:
+         json.dump(new_data, f)
+
+def add_vehicle():
+    vehicles = load_json("vehicle.json")
+    plate = license_entry.get().strip().upper()
+    expiry = date_entry.get().strip()
+    
+    if not plate or not expiry:
+        search_results_label.config(text="Iltimos ikkala fieldni to'ldiring")
+        return
+    
+    vehicle_found = False
+    
+    # Check if the vehicle is already in the list
+    for vehicle in vehicles:
+        if vehicle['license_plate'] == plate:
+            vehicle['expiry_date'] = expiry  # Update expiry date
+            search_results_label.config(text=f"Updated {plate} with Expiry: {expiry}")
+            vehicle_found = True
+            break
+    
+    if not vehicle_found:
+        # Add new vehicle
+        vehicles.append({"license_plate": plate, "expiry_date": expiry})
+        search_results_label.config(text=f"Added new vehicle {plate} with Expiry: {expiry}")
+    
+    # Save updated data
+    save_vehicle_data(vehicles)
+
+    # Clear input fields
+    license_entry.delete(0, tk.END)
+    date_entry.delete(0, tk.END)
+    
+    # Refresh vehicle list
+    refresh_vehicle_list()
+
+    # Function to refresh the vehicle list in the admin section
+def refresh_vehicle_list():
+    vehicle_list.delete(0, tk.END)
+    vehicles = load_json("vehicle.json")
+    
+    for vehicle in vehicles:
+        vehicle_list.insert(tk.END, f"Plate: {vehicle['license_plate']}, Expiry: {vehicle['expiry_date']}")
+
+
 
 def search_vehicle():
     plate_to_search = search_entry.get().strip().upper()
